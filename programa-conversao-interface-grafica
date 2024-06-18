@@ -1,0 +1,97 @@
+import tkinter as tk
+from tkinter import ttk
+
+def converter(valor, opcao):
+    if opcao == 1:
+        return valor * 0.4132
+    elif opcao == 2:
+        return valor * 10000
+    elif opcao == 3:
+        return valor / 2.42
+    elif opcao == 4:
+        return valor * 24200
+    elif opcao == 5:
+        return valor / 10000
+    elif opcao == 6:
+        return valor / 24200
+
+def realizar_conversao(valor, opcao, resultado_label, historico_listbox, opcoes):
+    try:
+        valor = float(valor.replace(".", ""))
+        opcao = opcao + 1
+        resultado = converter(valor, opcao)
+        resultado_label.config(text=f"{resultado:,.2f}")
+        historico_listbox.insert(0, f"{valor} - {opcoes[opcao-1]} = {resultado:,.2f}")
+    except ValueError:
+        resultado_label.config(text="Erro: Digite um número válido.")
+
+def criar_interface():
+    janela = tk.Tk()
+    janela.title("Conversor de Medidas de Imóveis - Patrimônio (IAT) ")
+    janela.configure(bg="#D3D3D3")  # Cor de fundo cinza claro
+    janela.iconbitmap("imagens\icone_medicao.ico")  
+
+
+    style = ttk.Style()
+    style.configure("Shadow.TLabel", background="#121212", foreground="white", font=("Arial", 12), padding=5, relief="flat")
+    style.configure("GrayShadow.TLabel", background="#D3D3D3", foreground="blue", font=("Arial", 14, "bold"), padding=5, relief="flat")
+    style.configure("TButton", background="#292929", foreground="black", font=("Arial", 12), padding=10, relief="flat")
+    style.map("TButton", background=[("active", "#393939")])
+    style.configure("Title.TLabel", background="#D3D3D3", foreground="black", font=("Arial", 16, "bold"))  # Cor de fundo cinza claro
+    style.configure("Developer.TLabel", background="#D3D3D3", foreground="black", font=("Arial", 10, "bold"))  # Cor de fundo cinza claro
+    style.configure("LightGray.TLabel", background="#D3D3D3", foreground="black", font=("Arial", 12, "bold"))  # Negrito para VALOR e OPÇÃO
+
+    # Widgets
+    label_titulo = ttk.Label(janela, text="Conversor de Medidas de Imóveis - Patrimônio IAT", style="Title.TLabel")
+    label_titulo.grid(row=0, column=0, columnspan=3, pady=10, sticky="nsew")
+
+    label_desenvolvedor = ttk.Label(janela, text="Desenvolvido por Rafael Souza (41) 99824-5865", style="Developer.TLabel", foreground="#228B22")  # Centralizado e verde
+    label_desenvolvedor.grid(row=1, column=0, columnspan=3, pady=5)
+
+    label_valor = ttk.Label(janela, text="DIGITE O VALOR:", style="LightGray.TLabel")
+    label_valor.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
+
+    entry_valor = ttk.Entry(janela, font=("Arial", 12))
+    entry_valor.grid(row=3, column=0, padx=5, pady=5)
+
+    label_opcao = ttk.Label(janela, text="SELECIONE UMA OPÇÃO:", style="LightGray.TLabel")
+    label_opcao.grid(row=2, column=2, padx=5, pady=5, sticky="nsew")
+
+    opcoes = [
+        "Hectares para Alqueires",
+        "Hectares para Metros Quadrados",
+        "Alqueires para Hectares",
+        "Alqueires para Metros Quadrados",
+        "Metros Quadrados para Hectares",
+        "Metros Quadrados para Alqueires"
+    ]
+    combobox_opcao = ttk.Combobox(janela, values=opcoes, font=("Arial", 12))
+    combobox_opcao.grid(row=3, column=2, padx=5, pady=5)
+    combobox_opcao.current(0)
+
+    label_resultado = ttk.Label(janela, text="", style="GrayShadow.TLabel")
+    label_resultado.grid(row=4, column=0, columnspan=3, pady=10, sticky="nsew", ipadx=10)  # Centralizado com padding interno
+    label_resultado.configure(anchor="center")
+
+    listbox_historico = tk.Listbox(janela, width=50, height=5, font=("Arial", 10))
+    listbox_historico.grid(row=5, column=0, columnspan=3, padx=5, pady=5)
+
+    def on_button_click():
+        realizar_conversao(entry_valor.get(), combobox_opcao.current(), label_resultado, listbox_historico, opcoes)
+
+    botao_converter = ttk.Button(janela, text="Converter", command=on_button_click, style="TButton")
+    botao_converter.grid(row=2, column=1, rowspan=2, padx=5, pady=5)
+
+    def limpar():
+        entry_valor.delete(0, tk.END)
+        combobox_opcao.current(0)
+        label_resultado.config(text="")
+        listbox_historico.delete(0, tk.END)
+
+    botao_limpar = ttk.Button(janela, text="Limpar", command=limpar, style="TButton")
+    botao_limpar.grid(row=6, column=0, columnspan=3, pady=10)
+
+    janela.mainloop()
+
+if __name__ == "__main__":
+    criar_interface()
